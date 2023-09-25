@@ -2,7 +2,7 @@
 spring:
   datasource:
     password:
-    url: jdbc:mysql://localhost:3306/serverManagetDB
+    url: jdbc:mysql://localhost:3306/serverManagerDB
     username: root
   jpa:
     hibernate:
