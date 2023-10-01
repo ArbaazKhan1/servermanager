@@ -25,13 +25,13 @@ public class ServermanagerApplication {
 	CommandLineRunner run(ServerRepo serverRepo) {
 		return args -> {
 			serverRepo.save(new Server(null,  "192.168.1.120", "Windows", "16 GB", "Personal PC",
-					"http://locahost:8080/server/image/serer2.png", Status.SERVER_UP));
+					"http://localhost:8080/server/image/server2.png", Status.SERVER_UP));
 			serverRepo.save(new Server(null,  "192.168.1.10", "Ubuntu", "16 GB", "Dell Tower",
-					"http://locahost:8080/server/image/serer4.png", Status.SERVER_DOWN));
+					"http://localhost:8080/server/image/server4.png", Status.SERVER_DOWN));
 			serverRepo.save(new Server(null,  "192.168.1.180", "MS 20010", "32 GB", "Web Server",
-					"http://locahost:8080/server/image/serer1.png", Status.SERVER_UP));
+					"http://localhost:8080/server/image/server1.png", Status.SERVER_UP));
 			serverRepo.save(new Server(null,  "192.168.1.155", "Windows", "32 GB", "Corperate PC",
-					"http://locahost:8080/server/image/serer3.png", Status.SERVER_DOWN));
+					"http://localhost:8080/server/image/server3.png", Status.SERVER_DOWN));
 		};
 	}
 	
