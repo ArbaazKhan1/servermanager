@@ -19,7 +19,7 @@ export class ServerService {
 
   constructor(private http: HttpClient) { } 
   //A more reactive way to make api calls to the backend
-  private readonly apiUrl = 'any';
+  private readonly apiUrl = 'http://localhost:8080';
 
   //When defining Obervables it is good practice to out down a $ at the end of it
   servers$ = <Observable<CustomResponse>> this.http.get<CustomResponse>(`${this.apiUrl}/server/list`)
