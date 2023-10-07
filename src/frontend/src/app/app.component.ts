@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
         startWith({ dataState: DataState.LOADING_STATE }), //appData is optional so don't need to pass
         catchError((error: string) => {
           //of is from rxjs to make an observable
-          return of({ dataState: DataState.ERROR_STATE, error: error })
+          return of({ dataState: DataState.ERROR_STATE, error: error });
         })
       );
   }
@@ -62,9 +62,24 @@ export class AppComponent implements OnInit {
           //stop showing spinner
           this.filterSubject.next('');
           //since variable error is the same name as error, can use shorthand and just set appData to error
-          return of({dataState: DataState.ERROR_STATE, error})
+          return of({dataState: DataState.ERROR_STATE, error});
         })
       )
+  }
 
+  filterServers(status: Status): void {
+    this.appState$ = this.serverService.filter$(status, this.dataSubject.value)
+      .pipe(
+        //load backend data
+        map(res => {
+          return {dataState: DataState.LOADED_STATE, appData: res}
+        }),
+        //wait for response, state and data already already loaded, thus loaded_state, and dataSubject is intial values 
+        startWith({ dataState: DataState.LOADED_STATE, appData: this.dataSubject.value }),
+        catchError((error: string) => {
+          //since variable error is the same name as error, can use shorthand and just set appData to error
+          return of({dataState: DataState.ERROR_STATE, error});
+        })
+      )
   }
 }

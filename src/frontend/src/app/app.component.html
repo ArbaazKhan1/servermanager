@@ -3,6 +3,7 @@
     <div class="table-responsive">
         <div class="table-wrapper">
             <div class="table-title">
+                <!-- this row is the banner -->
                 <div class="row">
                     <div class="col-sm-6">
                         <h2>Manage Servers</h2>
@@ -16,7 +17,8 @@
                         </a>
   
                         <span>
-                            <select  name="status" ngModel="ALL"  
+                            <!-- watch for a change in the select(ngModelChange). ngModel=All is the default behavior -->
+                            <select (ngModelChange)="filterServers($event)" ngModel="ALL" name="status" ngModel="ALL"  
                                 class="btn btn-info" style="height: 32.91px;">
                                 <option value="ALL">ALL</option>
                                 <option value="SERVER_UP">SERVER UP</option>
