@@ -71,12 +71,11 @@ export class ServerService {
     catchError(this.handleError)
   );
 
-  delete$ = (serverId: number) => <Observable<CustomResponse>> this.http.get<CustomResponse>(`${this.apiUrl}/server/ping${serverId}`)
+  delete$ = (serverId: number) => <Observable<CustomResponse>> this.http.delete<CustomResponse>(`${this.apiUrl}/server/delete/${serverId}`)
   .pipe(
     tap(console.log),
     catchError(this.handleError)
   );
-
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     console.log(error)

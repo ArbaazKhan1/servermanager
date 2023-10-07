@@ -5,6 +5,8 @@ import { AppState } from './interface/app-state';
 import { CustomResponse } from './interface/custom-response';
 import { DataState } from './enum/data-state.enum';
 import { Status } from './enum/status.enum';
+import { NgForm } from '@angular/forms';
+import { Server } from './interface/server';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +22,9 @@ export class AppComponent implements OnInit {
   private filterSubject = new BehaviorSubject<string> ('');
   //save response from backend
   private dataSubject = new BehaviorSubject<CustomResponse> (null);
-  filterStatus$ = this.filterSubject.asObservable();s
+  filterStatus$ = this.filterSubject.asObservable();
+  private isLoading = new BehaviorSubject<boolean> (false);
+  isLoading$ = this.isLoading.asObservable();
 
 
   constructor(private serverService: ServerService) { }
@@ -31,7 +35,8 @@ export class AppComponent implements OnInit {
       .pipe(
         map(res => {
           this.dataSubject.next(res);
-          return { dataState: DataState.LOADED_STATE, appData: res };
+          // reverse the array of servers so the latest server is always on top
+          return { dataState: DataState.LOADED_STATE, appData: {...res, data: {servers: res.data.servers.reverse()}} };
         }),
         //While servers$ is making the request  (this takes time), we will return the object inside of startWith
         startWith({ dataState: DataState.LOADING_STATE }), //appData is optional so don't need to pass
@@ -78,6 +83,52 @@ export class AppComponent implements OnInit {
         startWith({ dataState: DataState.LOADED_STATE, appData: this.dataSubject.value }),
         catchError((error: string) => {
           //since variable error is the same name as error, can use shorthand and just set appData to error
+          return of({dataState: DataState.ERROR_STATE, error});
+        })
+      )
+  }
+
+  saveServer(form: NgForm): void {
+    //show spinner when saving
+    this.isLoading.next(true);
+    this.appState$ = this.serverService.save$(<Server>form.value)
+      .pipe(
+        map(res => {
+          //Here we are adding the new server to our dataSubject
+          this.dataSubject.next(
+            // grab the response and override the data, and set servers to a new array with then new server added into it
+            {...res, data:{servers: [res.data.server, ...this.dataSubject.value.data.servers]}}
+          );
+          //close popup modal
+          document.getElementById('closeModal').click();
+          this.isLoading.next(false);
+          //reset form, default is always server down
+          form.resetForm({ status: this.Status.SERVER_DOWN});
+          return {dataState: DataState.LOADED_STATE, appData: this.dataSubject.value}
+        }),
+        startWith({ dataState: DataState.LOADED_STATE, appData: this.dataSubject.value }),
+        catchError((error: string) => {
+          this.isLoading.next(false);
+          return of({dataState: DataState.ERROR_STATE, error});
+        })
+      )
+  }
+
+  deleteServer(server: Server): void {
+    this.appState$ = this.serverService.delete$(server.id)
+      .pipe(
+        map(res => {
+          this.dataSubject.next(
+            {
+              ...res, 
+              // filter thru the dataSubject's list of servers and say keep all the servers who's ids dont match the server id we want to delete
+              data: {servers: this.dataSubject.value.data.servers.filter(s => s.id !== server.id )}
+            }
+          )
+          return {dataState: DataState.LOADED_STATE, appData: this.dataSubject.value}
+        }),
+        startWith({ dataState: DataState.LOADED_STATE, appData: this.dataSubject.value }),
+        catchError((error: string) => {
           return of({dataState: DataState.ERROR_STATE, error});
         })
       )

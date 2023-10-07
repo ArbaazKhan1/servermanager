@@ -80,7 +80,7 @@ public class ServerController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Response> deleteServers(@PathVariable("id") Long id) {
+    public ResponseEntity<Response> deleteServer(@PathVariable("id") Long id) {
         return ResponseEntity.ok(
                 Response.builder()
                         .timeStamp(LocalDateTime.now())
