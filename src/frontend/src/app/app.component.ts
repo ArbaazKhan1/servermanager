@@ -133,4 +133,25 @@ export class AppComponent implements OnInit {
         })
       )
   }
+
+  printReport(): void {
+    //print as a pdf
+    // window.print();
+
+    //print as a xls
+    let dataType = 'application/vnd.ms-excel.sheet.macroEnabled.12';
+    let table = document.getElementById('servers');
+    // we are replaceing white spaces (/ /g), with url encoded white spaces(%20)
+    let tableHtml = table.outerHTML.replace(/ /g, '%20');
+    let downLoadLink = document.createElement('a');
+    //create html markup
+    document.body.appendChild(downLoadLink);
+    //set href
+    downLoadLink.href = 'data:' + dataType + ', ' + tableHtml;
+    downLoadLink.download = 'server-report.xls';
+    downLoadLink.click();
+    // close html markup 
+    document.body.removeChild(downLoadLink);
+    
+  }
 }
